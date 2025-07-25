@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xprinter XC-80C Web Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7ff;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+
+        .subtitle {
+            color: #6c757d;
+            font-weight: 300;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .unit-selector {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 80px;
+            text-align: center;
+            transition: background 0.3s;
+        }
+
+        .unit-selector:hover {
+            background: var(--primary-dark);
+        }
+
+        .toggle-group {
+            display: flex;
+            background: #e9ecef;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .toggle-option {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .toggle-option.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #e3176a;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #3ab7d8;
+        }
+
+        .status {
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            background: #e9ecef;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .status.active {
+            background: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+
+        .status.error {
+            background: rgba(247, 37, 133, 0.2);
+            color: var(--danger);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .presets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preset-btn {
+            padding: 12px;
+            background: #e9ecef;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preset-btn small {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 3px;
+        }
+
+        .preset-btn:hover {
+            background: #dee2e6;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .connection-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #6c757d;
+        }
+
+        .connection-dot.connected {
+            background: #38b000;
+            animation: pulse 2s infinite;
+        }
+
+        .preset-management {
+            margin-top: 25px;
+            border-top: 1px solid #e9ecef;
+            padding-top: 20px;
+        }
+
+        .preset-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .preset-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .preset-list {
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .preset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            margin-bottom: 8px;
+        }
+
+        .preset-item-info {
+            flex: 1;
+        }
+
+        .preset-item-name {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .preset-item-length {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .preset-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .preset-action-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 5px;
+        }
+
+        .preset-action-btn.delete {
+            color: var(--danger);
+        }
+
+        .copy-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .copy-input {
+            width: 80px;
+            text-align: center;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(56, 176, 0, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(56, 176, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(56, 176, 0, 0);
+            }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .presets {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .preset-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Xprinter XC-80C Controller</h1>
+            <p class="subtitle">Precision paper length control</p>
+        </header>
+
+        <div class="connection-status">
+            <div class="connection-dot" id="connectionDot"></div>
+            <span id="connectionStatus">Disconnected</span>
+        </div>
+
+        <div class="card">
+            <div class="form-group">
+                <label for="paperLength">Paper Length</label>
+                <div class="input-group">
+                    <input type="number" id="paperLength" placeholder="Enter length" min="0" step="0.1" value="50">
+                    <div class="unit-selector" id="unitSelector">cm</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Copies</label>
+                <div class="copy-control">
+                    <button class="btn-secondary" id="decrementCopies">-</button>
+                    <input type="number" id="copyCount" class="copy-input" value="1" min="1" max="99">
+                    <button class="btn-secondary" id="incrementCopies">+</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Auto Cut</label>
+                <div class="toggle-group">
+                    <div class="toggle-option active" id="autoCutOn">ON</div>
+                    <div class="toggle-option" id="autoCutOff">OFF</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Quick Presets</label>
+                <div class="presets" id="presetButtons">
+                    <!-- Preset buttons will be generated here -->
+                </div>
+            </div>
+
+            <button class="btn btn-success" id="feedBtn">
+                <i class="fas fa-paper-plane"></i> Feed Paper
+            </button>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" id="testPrintBtn">
+                    <i class="fas fa-print"></i> Test Print
+                </button>
+                <button class="btn btn-danger" id="stopBtn">
+                    <i class="fas fa-stop"></i> Emergency Stop
+                </button>
+            </div>
+
+            <div class="preset-management">
+                <h3>Manage Presets</h3>
+                <div class="preset-input-group">
+                    <input type="text" id="presetName" class="preset-name" placeholder="Preset name">
+                    <input type="number" id="presetLength" class="preset-length" placeholder="Length" min="0" step="0.1">
+                    <select id="presetUnit" class="unit-selector">
+                        <option value="cm">cm</option>
+                        <option value="in">in</option>
+                    </select>
+                </div>
+                <div class="preset-actions">
+                    <button class="btn btn-secondary" id="addPresetBtn">
+                        <i class="fas fa-plus"></i> Add Preset
+                    </button>
+                    <button class="btn" id="savePresetsBtn">
+                        <i class="fas fa-save"></i> Save All
+                    </button>
+                </div>
+                <div class="preset-list" id="presetList">
+                    <!-- Preset list will be generated here -->
+                </div>
+            </div>
+
+            <div class="status" id="statusMessage">
+                Ready to feed paper
+            </div>
+        </div>
+
+        <footer>
+            <p>Xprinter XC-80C Controller &copy; 2023 | Web Simulator Version</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Constants
+            const MAX_FEED_PER_COMMAND = 255; // cm (maximum safe single feed)
+            
+            // DOM Elements
+            const paperLengthInput = document.getElementById('paperLength');
+            const unitSelector = document.getElementById('unitSelector');
+            const autoCutOn = document.getElementById('autoCutOn');
+            const autoCutOff = document.getElementById('autoCutOff');
+            const feedBtn = document.getElementById('feedBtn');
+            const testPrintBtn = document.getElementById('testPrintBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const statusMessage = document.getElementById('statusMessage');
+            const connectionDot = document.getElementById('connectionDot');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const copyCountInput = document.getElementById('copyCount');
+            const incrementCopiesBtn = document.getElementById('incrementCopies');
+            const decrementCopiesBtn = document.getElementById('decrementCopies');
+            
+            // Preset management elements
+            const presetButtonsContainer = document.getElementById('presetButtons');
+            const presetList = document.getElementById('presetList');
+            const presetNameInput = document.getElementById('presetName');
+            const presetLengthInput = document.getElementById('presetLength');
+            const presetUnitSelect = document.getElementById('presetUnit');
+            const addPresetBtn = document.getElementById('addPresetBtn');
+            const savePresetsBtn = document.getElementById('savePresetsBtn');
+
+            // State
+            let isConnected = false;
+            let currentUnit = 'cm';
+            let autoCutEnabled = true;
+            let isPrinting = false;
+            let currentJob = null;
+            let presets = [
+                { id: 1, name: "Short", length: 10, unit: "cm" },
+                { id: 2, name: "Medium", length: 30, unit: "cm" },
+                { id: 3, name: "Standard", length: 50, unit: "cm" },
+                { id: 4, name: "Long", length: 100, unit: "cm" },
+                { id: 5, name: "Extra Long", length: 150, unit: "cm" },
+                { id: 6, name: "Max Length", length: 180, unit: "cm" }
+            ];
+
+            // Initialize the app
+            function init() {
+                loadPresets();
+                simulateConnection();
+                setupEventListeners();
+            }
+
+            // Simulate printer connection
+            function simulateConnection() {
+                setTimeout(() => {
+                    isConnected = true;
+                    updateConnectionStatus();
+                    showStatus('Connected to Xprinter XC-80C', 'active');
+                }, 1500);
+            }
+
+            // Load presets from localStorage
+            function loadPresets() {
+                const savedPresets = localStorage.getItem('printerPresets');
+                if (savedPresets) {
+                    presets = JSON.parse(savedPresets);
+                }
+                renderPresets();
+            }
+
+            // Save presets to localStorage
+            function savePresets() {
+                localStorage.setItem('printerPresets', JSON.stringify(presets));
+                showStatus('Presets saved successfully', 'active');
+            }
+
+            // Render presets to both quick buttons and management list
+            function renderPresets() {
+                renderPresetButtons();
+                renderPresetList();
+            }
+
+            // Render quick preset buttons
+            function renderPresetButtons() {
+                presetButtonsContainer.innerHTML = '';
+                presets.forEach(preset => {
+                    const button = document.createElement('button');
+                    button.className = 'preset-btn';
+                    button.innerHTML = `${preset.name}<br><small>${preset.length} ${preset.unit}</small>`;
+                    button.dataset.id = preset.id;
+                    button.addEventListener('click', () => usePreset(preset));
+                    presetButtonsContainer.appendChild(button);
+                });
+            }
+
+            // Render preset list for management
+            function renderPresetList() {
+                presetList.innerHTML = '';
+                presets.forEach(preset => {
+                    const presetItem = document.createElement('div');
+                    presetItem.className = 'preset-item';
+                    presetItem.innerHTML = `
+                        <div class="preset-item-info">
+                            <div class="preset-item-name">${preset.name}</div>
+                            <div class="preset-item-length">${preset.length} ${preset.unit}</div>
+                        </div>
+                        <div class="preset-item-actions">
+                            <button class="preset-action-btn edit" data-id="${preset.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="preset-action-btn delete" data-id="${preset.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    presetList.appendChild(presetItem);
+                });
+
+                // Add event listeners to action buttons
+                document.querySelectorAll('.preset-action-btn.edit').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const presetId = parseInt(this.dataset.id);
+                        editPreset(presetId);
+                    });
+                });
+                
+                document.querySelectorAll('.preset-action-btn.delete').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const presetId = parseInt(this.dataset.id);
+                        deletePreset(presetId);
+                    });
+                });
+            }
+
+            // Use a preset
+            function usePreset(preset) {
+                paperLengthInput.value = preset.length;
+                if (preset.unit !== currentUnit) {
+                    toggleUnit(); // Switch unit if needed
+                }
+                showStatus(`Preset "${preset.name}" loaded`, 'active');
+            }
+
+            // Add a new preset
+            function addPreset() {
+                const name = presetNameInput.value.trim();
+                const length = parseFloat(presetLengthInput.value);
+                const unit = presetUnitSelect.value;
+                
+                if (!name || isNaN(length) || length <= 0) {
+                    showStatus('Please enter valid preset name and length', 'error');
+                    return;
+                }
+                
+                const newId = presets.length > 0 ? Math.max(...presets.map(p => p.id)) + 1 : 1;
+                const newPreset = {
+                    id: newId,
+                    name,
+                    length,
+                    unit
+                };
+                
+                presets.push(newPreset);
+                renderPresets();
+                presetNameInput.value = '';
+                presetLengthInput.value = '';
+                showStatus(`Preset "${name}" added`, 'active');
+            }
+
+            // Edit existing preset
+            function editPreset(presetId) {
+                const preset = presets.find(p => p.id === presetId);
+                if (!preset) return;
+                
+                const newName = prompt('Edit preset name:', preset.name);
+                if (newName === null) return;
+                
+                const newLength = prompt('Edit preset length:', preset.length);
+                if (newLength === null) return;
+                
+                const numLength = parseFloat(newLength);
+                if (isNaN(numLength)) {
+                    showStatus('Invalid length value', 'error');
+                    return;
+                }
+                
+                preset.name = newName.trim();
+                preset.length = numLength;
+                renderPresets();
+                showStatus(`Preset "${newName}" updated`, 'active');
+            }
+
+            // Delete preset
+            function deletePreset(presetId) {
+                if (!confirm('Are you sure you want to delete this preset?')) return;
+                
+                const presetIndex = presets.findIndex(p => p.id === presetId);
+                if (presetIndex === -1) return;
+                
+                const [deletedPreset] = presets.splice(presetIndex, 1);
+                renderPresets();
+                showStatus(`Preset "${deletedPreset.name}" deleted`, 'active');
+            }
+
+            // Toggle between cm and inches
+            function toggleUnit() {
+                currentUnit = currentUnit === 'cm' ? 'in' : 'cm';
+                unitSelector.textContent = currentUnit;
+                
+                // Convert value if needed
+                const currentValue = parseFloat(paperLengthInput.value);
+                if (!isNaN(currentValue)) {
+                    if (currentUnit === 'in') {
+                        paperLengthInput.value = (currentValue / 2.54).toFixed(2);
+                    } else {
+                        paperLengthInput.value = (currentValue * 2.54).toFixed(2);
+                    }
+                }
+            }
+
+            // Toggle auto cut
+            function toggleAutoCut(enable) {
+                autoCutEnabled = enable;
+                if (enable) {
+                    autoCutOn.classList.add('active');
+                    autoCutOff.classList.remove('active');
+                } else {
+                    autoCutOn.classList.remove('active');
+                    autoCutOff.classList.add('active');
+                }
+            }
+
+            // Handle copies increment/decrement
+            function setupCopyControls() {
+                incrementCopiesBtn.addEventListener('click', () => {
+                    copyCountInput.value = parseInt(copyCountInput.value) + 1;
+                });
+                
+                decrementCopiesBtn.addEventListener('click', () => {
+                    const current = parseInt(copyCountInput.value);
+                    if (current > 1) {
+                        copyCountInput.value = current - 1;
+                    }
+                });
+            }
+
+            // Feed paper function with multi-copy and unlimited length support
+            async function feedPaper() {
+                if (isPrinting) {
+                    showStatus('Already printing, please wait...', 'error');
+                    return;
+                }
+                
+                const length = parseFloat(paperLengthInput.value);
+                const copies = parseInt(copyCountInput.value);
+                
+                if (isNaN(length) || length <= 0) {
+                    showStatus('Please enter a valid length', 'error');
+                    return;
+                }
+                
+                if (isNaN(copies) || copies < 1) {
+                    showStatus('Please enter a valid copy count', 'error');
+                    return;
+                }
+                
+                if (!isConnected) {
+                    showStatus('Printer not connected', 'error');
+                    return;
+                }
+                
+                isPrinting = true;
+                feedBtn.disabled = true;
+                
+                try {
+                    for (let i = 0; i < copies; i++) {
+                        const copyText = copies > 1 ? ` (Copy ${i+1}/${copies})` : '';
+                        showStatus(`Feeding ${length} ${currentUnit}${copyText}...`, 'active');
+                        
+                        // Handle long feeds by breaking into chunks
+                        await feedPaperLength(length);
+                        
+                        if (autoCutEnabled && i < copies - 1) {
+                            // Add delay between copies if auto-cut is enabled
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                        }
+                    }
+                    
+                    showStatus(`Successfully printed ${copies} copy/copies of ${length} ${currentUnit}`, 'active');
+                } catch (err) {
+                    showStatus(`Error: ${err.message}`, 'error');
+                } finally {
+                    isPrinting = false;
+                    feedBtn.disabled = false;
+                }
+            }
+
+            // Handle feeding long lengths by breaking into chunks
+            async function feedPaperLength(totalLength) {
+                const MAX_CHUNK = currentUnit === 'cm' ? MAX_FEED_PER_COMMAND : MAX_FEED_PER_COMMAND / 2.54;
+                let remaining = totalLength;
+                
+                while (remaining > 0) {
+                    const chunk = Math.min(remaining, MAX_CHUNK);
+                    
+                    // Simulate printer communication (replace with actual commands)
+                    await simulatePrinterFeed(chunk);
+                    
+                    remaining -= chunk;
+                    
+                    // Add small delay between chunks
+                    if (remaining > 0) {
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                    }
+                }
+                
+                if (autoCutEnabled) {
+                    // Simulate auto-cut
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+            }
+
+            // Simulate printer feed (replace with actual printer commands)
+            function simulatePrinterFeed(length) {
+                return new Promise(resolve => {
+                    // In a real app, this would send ESC/POS commands to the printer
+                    const delay = Math.min(1000, length * 20); // Simulate feed time
+                    setTimeout(resolve, delay);
+                });
+            }
+
+            // Test print function
+            function testPrint() {
+                if (!isConnected) {
+                    showStatus('Printer not connected', 'error');
+                    return;
+                }
+                
+                showStatus('Printing test page...', 'active');
+                
+                setTimeout(() => {
+                    showStatus('Test print completed', 'active');
+                }, 3000);
+            }
+
+            // Emergency stop function
+            function emergencyStop() {
+                isPrinting = false;
+                showStatus('Printing stopped', 'error');
+                feedBtn.disabled = false;
+            }
+
+            // Show status message
+            function showStatus(message, type = '') {
+                statusMessage.textContent = message;
+                statusMessage.className = 'status';
+                if (type) {
+                    statusMessage.classList.add(type);
+                }
+            }
+
+            // Update connection status display
+            function updateConnectionStatus() {
+                if (isConnected) {
+                    connectionDot.classList.add('connected');
+                    connectionStatus.textContent = 'Connected';
+                } else {
+                    connectionDot.classList.remove('connected');
+                    connectionStatus.textContent = 'Disconnected';
+                }
+            }
+
+            // Setup all event listeners
+            function setupEventListeners() {
+                unitSelector.addEventListener('click', toggleUnit);
+                autoCutOn.addEventListener('click', () => toggleAutoCut(true));
+                autoCutOff.addEventListener('click', () => toggleAutoCut(false));
+                feedBtn.addEventListener('click', feedPaper);
+                testPrintBtn.addEventListener('click', testPrint);
+                stopBtn.addEventListener('click', emergencyStop);
+                addPresetBtn.addEventListener('click', addPreset);
+                savePresetsBtn.addEventListener('click', savePresets);
+                setupCopyControls();
+                
+                // Make buttons more touch-friendly
+                document.querySelectorAll('button, .toggle-option').forEach(button => {
+                    button.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.98)';
+                    });
+                    
+                    button.addEventListener('touchend', function() {
+                        this.style.transform = '';
+                    });
+                });
+            }
+
+            // Initialize the application
+            init();
+        });
+    </script>
+</body>
+</html>
